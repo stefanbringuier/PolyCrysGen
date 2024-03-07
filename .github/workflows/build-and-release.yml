@@ -12,10 +12,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      
-    - name: Install FUSE
-      if: runner.os == 'Linux'
-      run: sudo apt update && sudo apt install fuse -y
 
     - name: Setup build environment
       run: |
@@ -36,7 +32,7 @@ jobs:
     - name: Build AppImage with build-appimage-action
       uses: AppImageCrafters/build-appimage-action@master
       with:
-        recipe: AppImageBuilder.yml
+        recipe: config/AppImageBuilder.yml
       env:
         UPDATE_INFO: gh-releases-zsync|stefanbringuier|PolyCrysGen|latest|*.AppImage.zsync
 
