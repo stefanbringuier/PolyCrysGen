@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=PolyCrysGen
+Exec=./AppRun
+Terminal=true
+Type=Application
+Categories=Science;Physics;
+Version=1.0
+GenericName=Polycrystalline Generating Tool
+Keywords=materials;science;grain structure;polycrystals;
+MimeType=text/plain;text/x-log;
+Icon=/usr/share/icons/hicolor/256x256/apps/PolyCrysGen
+Comment=Application for generating multiphase polycrystals using atomsk and ASE for LAMMPS simulations.
+X-Author=Stefan Bringuier
+X-Contact=stefanbringuier@gmail.com

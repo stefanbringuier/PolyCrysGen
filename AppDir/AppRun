@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Set up Atomsk
+export PATH="$PATH:$APPDIR/usr/lib/atomsk"
+
+# Activate Python virtual environment
+source "$APPDIR/usr/lib/python-venv/bin/activate"
+
+# Run the PolyCrysGen.sh script
+"$APPDIR/usr/bin/PolyCrysGen.sh" "$@"
