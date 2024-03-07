@@ -23,7 +23,7 @@ jobs:
         wget -q https://atomsk.univ-lille.fr/code/atomsk_b0.13.1_Linux-amd64.tar.gz
         tar -xzf atomsk_b0.13.1_Linux-amd64.tar.gz -C AppDir/usr/lib/
         cp PolyCrysGen.sh AppDir/usr/bin/
-        python3 -m venv PolyCrysGen/AppDir/usr/lib/python-venv
+        python3 -m venv AppDir/usr/lib/python-venv
         source AppDir/usr/lib/python-venv/bin/activate
         pip install --upgrade pip
         pip install --upgrade git+https://gitlab.com/ase/ase.git@master
