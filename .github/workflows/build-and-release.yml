@@ -24,7 +24,7 @@ jobs:
         wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
         chmod +x appimagetool-x86_64.AppImage
         ls -l
-        cd ..
+        cd ~
 
     - name: Add appimagetool to PATH
       run: |
@@ -55,8 +55,7 @@ jobs:
 
     - name: Build AppImage
       run: |
-        cd
-        ./tools/appimagetool-x86_64.AppImage PolyCrysGen/AppDir -n PolyCrysGen.AppImage 
+        ./tools/appimagetool-x86_64.AppImage PolyCrysGen/AppDir -n ./PolyCrysGen.AppImage 
 
     - name: Upload AppImage as release artifact
       uses: actions/upload-artifact@v2
