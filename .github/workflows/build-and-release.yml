@@ -22,7 +22,7 @@ jobs:
       run: |
         wget -q https://atomsk.univ-lille.fr/code/atomsk_b0.13.1_Linux-amd64.tar.gz
         tar -xzf atomsk_b0.13.1_Linux-amd64.tar.gz -C PolyCrysGen/AppDir/usr/lib/
-        cp PolyCrysGen.sh PolyCrysGen/AppDir/usr/bin/
+        cp PolyCrysGen/PolyCrysGen.sh PolyCrysGen/AppDir/usr/bin/
         python3 -m venv PolyCrysGen/AppDir/usr/lib/python-venv
         source PolyCrysGen/AppDir/usr/lib/python-venv/bin/activate
         pip install --upgrade pip
