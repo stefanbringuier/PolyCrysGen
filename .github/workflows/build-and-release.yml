@@ -55,7 +55,7 @@ jobs:
 
     - name: Build AppImage
       run: |
-        ./tools/appimagetool-x86_64.AppImage PolyCrysGen/AppDir -n PolyCrysGen.AppImage
+        ./tools/appimagetool-x86_64.AppImage PolyCrysGen/AppDir -n PolyCrysGen.AppImage -i PolyCrysGen/AppDir/PolyCrysGen.desktop
 
     - name: Upload AppImage as release artifact
       uses: actions/upload-artifact@v2

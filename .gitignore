@@ -1,2 +1,3 @@
 AppDir/usr/bin/
 AppDir/usr/lib/
+*.AppImage
