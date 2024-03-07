@@ -12,6 +12,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      
+    - name: Install FUSE
+      if: runner.os == 'Linux'
+      run: sudo apt update && sudo apt install fuse -y
 
     - name: Download appimagetool
       run: |
