@@ -4,7 +4,7 @@
 export PATH="$PATH:$APPDIR/usr/bin"
 
 # Activate Python virtual environment
-source "$APPDIR/usr/lib/python-venv/bin/activate"
+source "$APPDIR/usr/bin/python-venv/bin/activate"
 
 # Run the PolyCrysGen.sh script
 "$APPDIR/usr/bin/PolyCrysGen.sh" "$@"
