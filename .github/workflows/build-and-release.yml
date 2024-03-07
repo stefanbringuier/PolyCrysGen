@@ -40,7 +40,7 @@ jobs:
       run: |
         wget -q https://atomsk.univ-lille.fr/code/atomsk_b0.13.1_Linux-amd64.tar.gz
         tar -xzf atomsk_b0.13.1_Linux-amd64.tar.gz
-        mv ./atomsk_b0.13.1_Linux-amd64/atomsk AppDir/usr/lib/
+        mv ./atomsk_b0.13.1_Linux-amd64/atomsk AppDir/usr/bin/
 
     - name: Copy PolyCrysGen.sh script
       run: cp PolyCrysGen.sh AppDir/usr/bin/

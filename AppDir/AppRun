@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set up Atomsk
-export PATH="$PATH:$APPDIR/usr/lib/atomsk"
+export PATH="$PATH:$APPDIR/usr/bin"
 
 # Activate Python virtual environment
 source "$APPDIR/usr/lib/python-venv/bin/activate"
