@@ -65,8 +65,10 @@ jobs:
         DEFAULT_BUMP: minor
         WITH_V: "true"
         RELEASE_BRANCHES: main
-      
+
+
     - name: Create Release
+      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
