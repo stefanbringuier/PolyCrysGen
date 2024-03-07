@@ -44,6 +44,11 @@
 #
 # [1] P. Hirel, Atomsk: A tool for manipulating and converting atomic data files, Computer Physics Communications 197 (2015) 212–219. https://doi.org/10.1016/j.cpc.2015.07.012.
 # [2] A. Hjorth Larsen, et al., The atomic simulation environment—a Python library for working with atoms, J. Phys.: Condens. Matter 29 (2017) 273002. https://doi.org/10.1088/1361-648X/aa680e.
+#
+# TODO:
+# - Decide on verbosity level via flag.
+# - More compounds
+#
 ###--------------
 ### Command line
 for arg in "$@"; do
@@ -196,22 +201,6 @@ for element in "${!phases_and_grains[@]}"; do
 	# Rename the final modified file to "{element}_modified_polycrystal.cfg"
 	mv "${element}_polycrystal_${index}.cfg" "${element}_modified_polycrystal.cfg"
 done
-
-# Old method
-# for element in "${!phases_and_grains[@]}"; do
-# 	grains=${phases_and_grains[$element]}
-# 	atomsk --polycrystal "${element}_unitcell.cfg" polycrystal.txt "${element}_polycrystal.cfg"
-
-# 	### Read the grain IDs for the current phase from tmp_grain_id_list.txt
-# 	ids_to_select=$(awk -v element="$element" '$1 != element { ids[$2] } END { for (id in ids) { if (!min || id < min) min = id; if (!max || id > max) max = id } print min ":" max }' grain_id_list.txt)
-
-# 	### Use the selected grain IDs for Atomsk command
-# 	if [[ ! -z "$ids_to_select" ]]; then
-# 		atomsk "${element}_polycrystal.cfg" -select prop grainID $ids_to_select -rmatom select "${element}_modified_polycrystal.cfg"
-# 	else
-# 		echo "No grain IDs found for phase $element."
-# 	fi
-# done
 
 # Step 3: merge all images of polycrystal phases.
 selected_cfg_count=$(ls -1 *_modified_polycrystal.cfg 2>/dev/null | wc -l)

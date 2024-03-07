@@ -1,6 +1,4 @@
 # PolyCrysGen 
-[![AppImage](https://github.com/stefanbringuier/PolyCrysGen/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/stefanbringuier/PolyCrysGen/actions/workflows/build-and-release.yml)
-
 <p align="center">
 <a href="https://github.com">
   <img src="https://img.shields.io/badge/Name-Stefan%20Bringuier-green?style=flat-square" alt="Name Badge">
@@ -11,13 +9,16 @@
   <a href="https://stefanbringuier.info">
     <img alt="Website" src="https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fstefanbringuier.info">
   </a>
+  <a href="https://github.com/stefanbringuier/PolyCrysGen/actions/workflows/build-and-release.yml">
+  <img alt="build-and-release" src="https://github.com/stefanbringuier/PolyCrysGen/actions/workflows/build-and-release.yml/badge.svg">
+  </a>
 </p>
 
 
 ## Description
 This is a wrapper-script to generate polycrystalline samples for LAMMPS simulation. It utilizes [ASE (Atomic Simulation Environment)](https://wiki.fysik.dtu.dk/ase) and [Atomsk](https://atomsk.univ-lille.fr/) to create the base unit cells, then multi-phase polycrystalline structures, and write a LAMMPS data file (`atom_style full`). The flags you can pass to the script are simulation box size, elemental phases and number of grains. All grains are randomly oriented, constructed under PBC, and unwrapped with image flags in the data file. Assumes bulk structures are  available from ASE.build.bulk. You should be able to create as many elemental phases+grains as needed.
 
-> Note: Only pure elemental structures that are in `bulk` from `ase.build` are available at the moment. 
+> Note: Only pure elemental structures that are in `bulk` from `ase.build` are fully covered at the moment. Some compounds are available.
 
 ## Usage
 If your python setup has [ASE](https://wiki.fysik.dtu.dk/ase/) and your linux environment path includes the [`atomsk`](https://atomsk.univ-lille.fr/) binary, then the [PolyCrysGen.sh](./PolyCrysGen.sh) file can be ran as is by executing in the command line with: `bash PolyCrysGen.sh` or  `chmod +x PolyCrysGen.sh; ./PolyCrysGen.sh`.
