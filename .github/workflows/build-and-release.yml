@@ -1,47 +1,3 @@
-name: Build and Release AppImage
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Setup build environment
-      run: |
-        mkdir -p AppDir/usr/bin
-        mkdir -p AppDir/usr/lib
-
-    - name: Prepare application
-      run: |
-        wget -q https://atomsk.univ-lille.fr/code/atomsk_b0.13.1_Linux-amd64.tar.gz
-        tar -xzf atomsk_b0.13.1_Linux-amd64.tar.gz -C AppDir/usr/lib/
-        cp PolyCrysGen.sh AppDir/usr/bin/
-        python3 -m venv AppDir/usr/lib/python-venv
-        source AppDir/usr/lib/python-venv/bin/activate
-        pip install --upgrade pip
-        pip install --upgrade git+https://gitlab.com/ase/ase.git@master
-        deactivate
-
-    - name: Build AppImage with build-appimage-action
-      uses: AppImageCrafters/build-appimage-action@master
-      with:
-        recipe: config/AppImageBuilder.yml
-      env:
-        UPDATE_INFO: gh-releases-zsync|stefanbringuier|PolyCrysGen|latest|*.AppImage.zsync
-
-    - name: Upload AppImage as release artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: PolyCrysGen.AppImage
-        path: ./*.AppImage
-
 # name: Build and Release AppImage
 
 # on:
@@ -56,53 +12,97 @@ jobs:
 #     steps:
 #     - name: Checkout repository
 #       uses: actions/checkout@v2
-      
-#     - name: Install FUSE
-#       if: runner.os == 'Linux'
-#       run: sudo apt update && sudo apt install fuse -y
 
-#     - name: Download appimagetool
+#     - name: Setup build environment
 #       run: |
-#         mkdir -p tools
-#         cd tools
-#         wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-#         chmod +x appimagetool-x86_64.AppImage
-#         ls -l
-#         cd ~
+#         mkdir -p AppDir/usr/bin
+#         mkdir -p AppDir/usr/lib
 
-#     - name: Add appimagetool to PATH
-#       run: |
-#         echo "$PWD/tools" >> $GITHUB_PATH
-#         echo "$GITHUB_PATH"  # Print the updated PATH variable for debugging purposes
-
-#     - name: Create directories usr/bin and usr/lib
-#       run: |
-#         mkdir -p PolyCrysGen/AppDir/usr/bin
-#         mkdir -p PolyCrysGen/AppDir/usr/lib
-
-#     - name: Download and unpack atomsk binary
+#     - name: Prepare application
 #       run: |
 #         wget -q https://atomsk.univ-lille.fr/code/atomsk_b0.13.1_Linux-amd64.tar.gz
-#         tar -xzf atomsk_b0.13.1_Linux-amd64.tar.gz
-#         mv ./atomsk_b0.13.1_Linux-amd64/atomsk PolyCrysGen/AppDir/usr/lib/
-
-#     - name: Copy PolyCrysGen.sh script
-#       run: cp PolyCrysGen.sh PolyCrysGen/AppDir/usr/bin/
-
-#     - name: Set up Python and ASE
-#       run: |
-#         python3 -m venv PolyCrysGen/AppDir/usr/lib/python-venv
-#         source PolyCrysGen/AppDir/usr/lib/python-venv/bin/activate
+#         tar -xzf atomsk_b0.13.1_Linux-amd64.tar.gz -C AppDir/usr/lib/
+#         cp PolyCrysGen.sh AppDir/usr/bin/
+#         python3 -m venv AppDir/usr/lib/python-venv
+#         source AppDir/usr/lib/python-venv/bin/activate
 #         pip install --upgrade pip
 #         pip install --upgrade git+https://gitlab.com/ase/ase.git@master
 #         deactivate
 
-#     - name: Build AppImage
-#       run: |
-#         ./tools/appimagetool-x86_64.AppImage PolyCrysGen/AppDir -n ./PolyCrysGen.AppImage 
+#     - name: Build AppImage with build-appimage-action
+#       uses: AppImageCrafters/build-appimage-action@master
+#       with:
+#         recipe: config/AppImageBuilder.yml
+#       env:
+#         UPDATE_INFO: gh-releases-zsync|stefanbringuier|PolyCrysGen|latest|*.AppImage.zsync
 
 #     - name: Upload AppImage as release artifact
 #       uses: actions/upload-artifact@v2
 #       with:
 #         name: PolyCrysGen.AppImage
-#         path: PolyCrysGen.AppImage
+#         path: ./*.AppImage
+
+name: Build and Release AppImage
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Install FUSE
+      if: runner.os == 'Linux'
+      run: sudo apt update && sudo apt install fuse -y
+
+    - name: Download appimagetool
+      run: |
+        mkdir -p tools
+        cd tools
+        wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+        chmod +x appimagetool-x86_64.AppImage
+        ls -l
+        cd ~
+
+    - name: Add appimagetool to PATH
+      run: |
+        echo "$PWD/tools" >> $GITHUB_PATH
+        echo "$GITHUB_PATH"  # Print the updated PATH variable for debugging purposes
+
+    - name: Create directories usr/bin and usr/lib
+      run: |
+        mkdir -p AppDir/usr/bin
+        mkdir -p AppDir/usr/lib
+
+    - name: Download and unpack atomsk binary
+      run: |
+        wget -q https://atomsk.univ-lille.fr/code/atomsk_b0.13.1_Linux-amd64.tar.gz
+        tar -xzf atomsk_b0.13.1_Linux-amd64.tar.gz
+        mv ./atomsk_b0.13.1_Linux-amd64/atomsk AppDir/usr/lib/
+
+    - name: Copy PolyCrysGen.sh script
+      run: cp PolyCrysGen.sh AppDir/usr/bin/
+
+    - name: Set up Python and ASE
+      run: |
+        python3 -m venv AppDir/usr/lib/python-venv
+        source AppDir/usr/lib/python-venv/bin/activate
+        pip install --upgrade pip
+        pip install --upgrade git+https://gitlab.com/ase/ase.git@master
+        deactivate
+
+    - name: Build AppImage
+      run: |
+        ./tools/appimagetool-x86_64.AppImage AppDir -n PolyCrysGen.AppImage 
+
+    - name: Upload AppImage as release artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: PolyCrysGen.AppImage
+        path: PolyCrysGen.AppImage
