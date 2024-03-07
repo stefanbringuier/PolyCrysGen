@@ -19,10 +19,13 @@ jobs:
         cd tools
         wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
         chmod +x appimagetool-x86_64.AppImage
+        ls -l
+        cd ..
 
     - name: Add appimagetool to PATH
       run: |
         echo "$PWD/tools" >> $GITHUB_PATH
+        echo "$GITHUB_PATH"  # Print the updated PATH variable for debugging purposes
 
     - name: Create directories usr/bin and usr/lib
       run: |
