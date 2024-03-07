@@ -47,8 +47,8 @@ jobs:
 
     - name: Set up Python and ASE
       run: |
-        python3 -m venv AppDir/usr/lib/python-venv
-        source AppDir/usr/lib/python-venv/bin/activate
+        python3 -m venv AppDir/usr/bin/python-venv
+        source AppDir/usr/bin/python-venv/bin/activate
         pip install --upgrade pip
         pip install --upgrade git+https://gitlab.com/ase/ase.git@master
         deactivate
