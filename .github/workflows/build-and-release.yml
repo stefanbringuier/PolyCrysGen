@@ -1,47 +1,3 @@
-# name: Build and Release AppImage
-
-# on:
-#   push:
-#     branches:
-#       - main
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Checkout repository
-#       uses: actions/checkout@v2
-
-#     - name: Setup build environment
-#       run: |
-#         mkdir -p AppDir/usr/bin
-#         mkdir -p AppDir/usr/lib
-
-#     - name: Prepare application
-#       run: |
-#         wget -q https://atomsk.univ-lille.fr/code/atomsk_b0.13.1_Linux-amd64.tar.gz
-#         tar -xzf atomsk_b0.13.1_Linux-amd64.tar.gz -C AppDir/usr/lib/
-#         cp PolyCrysGen.sh AppDir/usr/bin/
-#         python3 -m venv AppDir/usr/lib/python-venv
-#         source AppDir/usr/lib/python-venv/bin/activate
-#         pip install --upgrade pip
-#         pip install --upgrade git+https://gitlab.com/ase/ase.git@master
-#         deactivate
-
-#     - name: Build AppImage with build-appimage-action
-#       uses: AppImageCrafters/build-appimage-action@master
-#       with:
-#         recipe: config/AppImageBuilder.yml
-#       env:
-#         UPDATE_INFO: gh-releases-zsync|stefanbringuier|PolyCrysGen|latest|*.AppImage.zsync
-
-#     - name: Upload AppImage as release artifact
-#       uses: actions/upload-artifact@v2
-#       with:
-#         name: PolyCrysGen.AppImage
-#         path: ./*.AppImage
-
 name: Build and Release AppImage
 
 on:
@@ -101,8 +57,31 @@ jobs:
       run: |
         ./tools/appimagetool-x86_64.AppImage AppDir -n PolyCrysGen.AppImage 
 
-    - name: Upload AppImage as release artifact
-      uses: actions/upload-artifact@v2
+    - name: Determine Next Version
+      id: versioning
+      uses: anothrNick/github-tag-action@1.36.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        DEFAULT_BUMP: minor
+        WITH_V: "true"
+        RELEASE_BRANCHES: main
+      
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: PolyCrysGen.AppImage
-        path: PolyCrysGen.AppImage
+        tag_name: ${{ steps.versioning.outputs.new_tag }}
+        release_name: Release ${{ steps.versioning.outputs.new_tag }}
+        draft: false
+        prerelease: false
+    
+    - name: Upload AppImage as release artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This is the step ID of the Create Release step
+        asset_path: ./PolyCrysGen.AppImage
+        asset_name: PolyCrysGen.AppImage
+        asset_content_type: application/octet-stream
