@@ -15,16 +15,16 @@ jobs:
 
     - name: Setup build environment
       run: |
-        mkdir -p PolyCrysGen/AppDir/usr/bin
-        mkdir -p PolyCrysGen/AppDir/usr/lib
+        mkdir -p AppDir/usr/bin
+        mkdir -p AppDir/usr/lib
 
     - name: Prepare application
       run: |
         wget -q https://atomsk.univ-lille.fr/code/atomsk_b0.13.1_Linux-amd64.tar.gz
-        tar -xzf atomsk_b0.13.1_Linux-amd64.tar.gz -C PolyCrysGen/AppDir/usr/lib/
-        cp PolyCrysGen/PolyCrysGen.sh PolyCrysGen/AppDir/usr/bin/
+        tar -xzf atomsk_b0.13.1_Linux-amd64.tar.gz -C AppDir/usr/lib/
+        cp PolyCrysGen.sh AppDir/usr/bin/
         python3 -m venv PolyCrysGen/AppDir/usr/lib/python-venv
-        source PolyCrysGen/AppDir/usr/lib/python-venv/bin/activate
+        source AppDir/usr/lib/python-venv/bin/activate
         pip install --upgrade pip
         pip install --upgrade git+https://gitlab.com/ase/ase.git@master
         deactivate
