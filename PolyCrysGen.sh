@@ -22,6 +22,20 @@
 # Help:
 # Pass -h or --help to display this help message.
 #
+# Supported Compounds:
+# 	SiC
+#	MgO
+#	GaAs
+#	ZnO
+#	TiC
+#	CaF2
+#	NaCl
+#	LiF
+#	CsCl
+#	PbTe
+#	CdSe
+#	InP
+#
 # Author: Stefan Bringuier
 # Email: stefanbringuier@gmail.com
 # Website: https://stefanbringuier.info
@@ -103,10 +117,40 @@ if $file_found; then
 	fi
 fi
 
+declare -A compounds=(
+	["SiC"]="zincblende 4.3596"
+	["MgO"]="rocksalt 4.212"
+	["GaAs"]="zincblende 5.653"
+	["ZnO"]="wurtzite 3.25 5.207"
+	["TiC"]="rocksalt 4.33"
+	["CaF2"]="fluorite 5.463"
+	["NaCl"]="rocksalt 5.640"
+	["LiF"]="rocksalt 4.02"
+	["CsCl"]="cesiumchloride 4.123"
+	["PbTe"]="rocksalt 6.46"
+	["CdSe"]="wurtzite 4.3 7.01"
+	["InP"]="zincblende 5.869"
+)
+
 # Step 1:  Using ASE to create unit cells for each phase
 for element in "${!phases_and_grains[@]}"; do
 	grains=${phases_and_grains[$element]}
-	python -c "from ase.build import bulk; from ase.io import write; atoms = bulk('$element'); write('${element}_unitcell.cfg', atoms, format='cfg')"
+	if [[ ${compounds[$element]+_} ]]; then
+		# If the element is in the compounds array, use the specified structure and lattice constant
+		IFS=' ' read -r -a params <<<"${compounds[$element]}"
+		crystal_structure=${params[0]}
+		a=${params[1]}
+		python_cmd="from ase.build import bulk; from ase.io import write; atoms = bulk('$element', '$crystal_structure', a=$a"
+		if [[ ! -z ${params[2]} ]]; then
+			c=${params[2]}
+			python_cmd+=", c=$c"
+		fi
+		python_cmd+="); write('${element}_unitcell.cfg', atoms, format='cfg')"
+		python -c "$python_cmd"
+	else
+		# For elements or compounds not specified in the compounds array, use the default bulk builder
+		python -c "from ase.build import bulk; from ase.io import write; atoms = bulk('$element'); write('${element}_unitcell.cfg', atoms, format='cfg')"
+	fi
 done
 
 ### Create atomsk polycrystalline file

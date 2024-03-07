@@ -51,7 +51,7 @@ At the end you will also be prompted if you want to delete any output files, if 
 ## TODO
 - [x] Add logic for 1 phase.
 - [ ] Verify 4+ phases (I believe the logic require alphabetic ordering in `--phases` arg?)
-- [ ] Add support for compound phases (ex. SiC)
+- [x] Add support for compound phases (ex. SiC) [**Partial List**]
 
 ## References
 1. P. Hirel, Atomsk: A tool for manipulating and converting atomic data files, Computer Physics Communications 197 (2015) 212–219. [https://doi.org/10.1016/j.cpc.2015.07.012](https://doi.org/10.1016/j.cpc.2015.07.012).
