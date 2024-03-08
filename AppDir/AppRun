@@ -3,8 +3,8 @@
 # Set up Atomsk
 export PATH="$PATH:$APPDIR/usr/bin"
 
-# Activate Python virtual environment
-source "$APPDIR/usr/lib/python-venv/bin/activate"
+PYTHON="$APPDIR/usr/lib/python3/venv/bin/python3.10"
+export PYTHONPATH="$APPDIR/usr/lib/python3/venv/lib/python3.10/site-packages:$PYTHONPATH"
 
 # Run the PolyCrysGen.sh script
 "$APPDIR/usr/bin/PolyCrysGen.sh" "$@"
