@@ -29,7 +29,7 @@ Optionally, I have put together a portable `x86_64` [AppImage](https://github.co
 chmod +x PolyCrysGen.AppImage
 ./PolyCrysGen.AppImage --help
 ```
-> Note: I have only tested the AppImage on Ubuntu
+> Note: I have only tested the AppImage on Ubuntu and requires you install `libfuse2` (`apt install libfuse2`)
 
 **Example:**
 
