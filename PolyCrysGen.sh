@@ -36,6 +36,16 @@
 #	CdSe
 #	InP
 #
+# (Experimental) If you would like to specify grains to be amorphous use the following syntax:
+#
+# ./PolyCrysGen.sh --phases "SiC-a:2 Ge:2" --size "100 100 100"
+#
+# This will use the script `genamorph.py` and generate a seed cell with stoichiometry
+# Si:1 C:1 and then use that seed cell for two grains.
+#
+# Note that this can be very time-consuming because the `genmorph.py` script uses
+# a min distance criteria to insert atoms via a metropolis like algo.
+#
 # Author: Stefan Bringuier
 # Email: stefanbringuier@gmail.com
 # Website: https://stefanbringuier.info
@@ -97,12 +107,23 @@ while true; do
 	esac
 done
 
-### Parse phases and grains
+### Parse phases and grains, and identify amorphous phases
 declare -A phases_and_grains
 IFS=' ' read -r -a phase_array <<<"$PHASES"
 for phase in "${phase_array[@]}"; do
-	IFS=':' read -r element grain <<<"$phase"
-	phases_and_grains[$element]=$grain
+	if [[ $phase == *"-a:"* ]]; then
+		# Amorphous phase
+		echo "!! Amorphous phase(s) requested !!"
+		echo "!! Will use genamorph.py to create seed !!"
+		compound=$(echo $phase | sed -E 's/-a([0-9]*):/:/g' | cut -d':' -f1)
+		grains=$(echo $phase | cut -d':' -f2)
+		# Correctly store compound with "-a" to signify amorphous in the key
+		phases_and_grains[${compound}"-a"]=$grains
+	else
+		# Crystalline phase
+		IFS=':' read -r element grain <<<"$phase"
+		phases_and_grains[$element]=$grain
+	fi
 done
 
 ### Remove old files
@@ -137,24 +158,51 @@ declare -A compounds=(
 	["InP"]="zincblende 5.869"
 )
 
-# Step 1:  Using ASE to create unit cells for each phase
-for element in "${!phases_and_grains[@]}"; do
-	grains=${phases_and_grains[$element]}
-	if [[ ${compounds[$element]+_} ]]; then
-		# If the element is in the compounds array, use the specified structure and lattice constant
-		IFS=' ' read -r -a params <<<"${compounds[$element]}"
-		crystal_structure=${params[0]}
-		a=${params[1]}
-		python_cmd="from ase.build import bulk; from ase.io import write; atoms = bulk('$element', '$crystal_structure', a=$a"
-		if [[ ! -z ${params[2]} ]]; then
-			c=${params[2]}
-			python_cmd+=", c=$c"
-		fi
-		python_cmd+="); write('${element}_unitcell.cfg', atoms, format='cfg')"
-		python -c "$python_cmd"
+# Step 1: Using ASE to create unit cells for each phase, and using genamorph.py for amorphous structures
+for compound in "${!phases_and_grains[@]}"; do
+	grains=${phases_and_grains[$compound]}
+	if [[ $compound == *"-a" ]]; then
+		# Remove the "-a" suffix to process the amorphous compound
+		actual_compound=${compound%-a}
+		# Extract elements and their stoichiometry for the genamorph.py script
+		species_arg=""
+		# Regular expression to match element symbols and stoichiometry
+		regex="([A-Z][a-z]*)([0-9]*)"
+		# Loop through matches in the compound string
+		while [[ $actual_compound =~ $regex ]]; do
+			element=${BASH_REMATCH[1]}       # Element symbol
+			stoichiometry=${BASH_REMATCH[2]} # Stoichiometry (if present)
+			# Append element and stoichiometry to species_arg
+			if [[ ! -z $stoichiometry ]]; then
+				species_arg+="$element:$stoichiometry "
+			else
+				species_arg+="$element:1 " # Default stoichiometry is 1
+			fi
+			# Remove the matched part from the compound string
+			actual_compound=${actual_compound#*${BASH_REMATCH[0]}}
+		done
+		species_arg=$(echo $species_arg | sed 's/ $//') # Trim trailing space
+		# Corrected call to genamorph.py with proper species argument formatting
+		echo "!! Generating amorphous structure for $compound with species $species_arg !!"
+		echo "!! This could take sometime ... !!"
+		genamorph.py -s ${species_arg} -c 12 12 12 --density 1.0 -of "${compound}_unitcell.cfg" -frmt cfg
 	else
-		# For elements or compounds not specified in the compounds array, use the default bulk builder
-		python -c "from ase.build import bulk; from ase.io import write; atoms = bulk('$element'); write('${element}_unitcell.cfg', atoms, format='cfg')"
+		if [[ ${compounds[$compound]+_} ]]; then
+			# If the element is in the compounds array, use the specified structure and lattice constant
+			IFS=' ' read -r -a params <<<"${compounds[$element]}"
+			crystal_structure=${params[0]}
+			a=${params[1]}
+			python_cmd="from ase.build import bulk; from ase.io import write; atoms = bulk('$compound', '$crystal_structure', a=$a"
+			if [[ ! -z ${params[2]} ]]; then
+				c=${params[2]}
+				python_cmd+=", c=$c"
+			fi
+			python_cmd+="); write('${compound}_unitcell.cfg', atoms, format='cfg')"
+			python -c "$python_cmd"
+		else
+			# For elements or compounds not specified in the compounds array, use the default bulk builder
+			python -c "from ase.build import bulk; from ase.io import write; atoms = bulk('$compound'); write('${compound}_unitcell.cfg', atoms, format='cfg')"
+		fi
 	fi
 done
 

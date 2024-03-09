@@ -16,11 +16,16 @@
 
 
 ## Description
+
+> ⚠️ CAUTION ⚠️: All structures are strictly generated via geometric considerations. No energy minimization/relaxation is being performed!
+ 
 This is a wrapper-script to generate polycrystalline samples for LAMMPS simulation. It utilizes [ASE (Atomic Simulation Environment)](https://wiki.fysik.dtu.dk/ase) and [Atomsk](https://atomsk.univ-lille.fr/) to create the base unit cells, then multi-phase polycrystalline structures, and write a LAMMPS data file (`atom_style full`). The flags you can pass to the script are simulation box size, elemental phases and number of grains. All grains are randomly oriented, constructed under PBC, and unwrapped with image flags in the data file. Assumes bulk structures are  available from ASE.build.bulk. You should be able to create as many elemental phases+grains as needed.
 
-> Note: Only pure elemental structures that are in `bulk` from `ase.build` are fully covered at the moment. Some compounds are available.
+> 📓 NOTE: Only pure elemental structures that are in `bulk` from `ase.build` are fully covered at the moment. Some compounds and an experimental amorphous phase creation option are available.
 
-## Usage
+
+
+## Usage 🔨
 If your python setup has [ASE](https://wiki.fysik.dtu.dk/ase/) and your linux environment path includes the [`atomsk`](https://atomsk.univ-lille.fr/) binary, then the [PolyCrysGen.sh](./PolyCrysGen.sh) file can be ran as is by executing in the command line with: `bash PolyCrysGen.sh` or  `chmod +x PolyCrysGen.sh; ./PolyCrysGen.sh`.
 
 Optionally, I have put together a portable `x86_64` [AppImage](https://github.com/stefanbringuier/PolyCrysGen/releases) release which you can download and then in a Linux terminal:
@@ -43,7 +48,20 @@ chmod +x PolyCrysGen.AppImage
 - `-p, --phases PHASES`: Specify phases and number of grains "Element1:N-Grains Element2:M-Grains". Default is "Si:2 Ge:3".
 - `-x, --postfix POSTFIX`: Set a postfix for the generated files. Default is "Polycrystal".
 
-### Notes on running
+### Adding Amorphous phases
+> ☣️ This is still very experimental!
+
+Although, as the name suggest, the focus is on multiphase polycrystalline materials. If you would like to specify grains to be amorphous use the following syntax:
+
+`./PolyCrysGen.sh --phases "SiC-a:2 Ge:2" --size "100 100 100"`
+
+This will use the script [`genamorph.py`](./genmorph.py) and generate a seed cell with stoichiometry infered from the formula (e.g., Si:1 C:1) and then use the generated structure as the seed cell for the grains (two in the example above).
+
+> 📓 NOTE: This can be very time-consuming because the `genmorph.py` script uses a min distance criteria to insert atoms via a metropolis like algo and is not parallelized. Also the amorphous structure(s) might be very far from reality.
+
+![](./resources/SiC_Amorph_Ge_Crystalline_1.png) ![](./resources/SiC_Amorph_Ge_Crystalline_2.png)
+
+### Notes on running 🏃
 
 The script will prompt you in the beginning to remove any file formats that are used in the workfow, if you don't do anything after 10 seconds it will default to `n`. This can have unintended consequences and is more of a check so you don't delete anything you wanted to preserve. You usually want to use `y`.
 
@@ -54,7 +72,7 @@ At the end you will also be prompted if you want to delete any output files, if 
 - [ ] Verify 4+ phases (I believe the logic require alphabetic ordering in `--phases` arg?)
 - [x] Add support for compound phases (ex. SiC) [**Partial List**]
 
-## References
+## 📚 References
 1. P. Hirel, Atomsk: A tool for manipulating and converting atomic data files, Computer Physics Communications 197 (2015) 212–219. [https://doi.org/10.1016/j.cpc.2015.07.012](https://doi.org/10.1016/j.cpc.2015.07.012).
 2. A. Hjorth Larsen, et al., The atomic simulation environment—a Python library for working with atoms, J. Phys.: Condens. Matter 29 (2017) 273002. [https://doi.org/10.1088/1361-648X/aa680e](https://doi.org/10.1088/1361-648X/aa680e).
 

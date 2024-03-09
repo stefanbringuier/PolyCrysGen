@@ -43,7 +43,10 @@ jobs:
         mv ./atomsk_b0.13.1_Linux-amd64/atomsk AppDir/usr/bin/
 
     - name: Copy PolyCrysGen.sh script
-      run: cp PolyCrysGen.sh AppDir/usr/bin/
+      run: |
+        cp PolyCrysGen.sh AppDir/usr/bin/
+        cp genamorph.py AppDir/usr/bin/
+        chmod +x AppDir/usr/bin/genamorph.py
 
     - name: Set up Python and ASE
       run: |
@@ -52,8 +55,11 @@ jobs:
         mkdir -p AppDir/usr/lib/python3
         python3.10 -m venv AppDir/usr/lib/python3/venv
         AppDir/usr/lib/python3/venv/bin/python3.10 -m pip install --upgrade pip
+        AppDir/usr/lib/python3/venv/bin/python3.10 -m pip install --upgrade tqdm
+        AppDir/usr/lib/python3/venv/bin/python3.10 -m pip install --upgrade numpy
+        AppDir/usr/lib/python3/venv/bin/python3.10 -m pip install --upgrade scipy
         AppDir/usr/lib/python3/venv/bin/python3.10 -m pip install --upgrade git+https://gitlab.com/ase/ase.git@master
-      
+       
     - name: Build AppImage
       run: |
         ./tools/appimagetool-x86_64.AppImage AppDir -n PolyCrysGen.AppImage 
